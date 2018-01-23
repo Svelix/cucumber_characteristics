@@ -75,7 +75,9 @@ module CucumberCharacteristics
         step_profiles[step_name][:total_count] += 1
         step_profiles[step_name][s.status][:feature_location][feature_location] ||= []
         next unless s.status != :undefined
-        step_profiles[step_name][:regexp] = s.step_match.step_definition.regexp_source
+        regexp = s.step_match.step_definition.try :regexp_source
+        regexp ||= s.step_match.step_definition.try :expression
+        step_profiles[step_name][:regexp] = regexp.to_s
         if s.status == :passed
           step_profiles[step_name][s.status][:feature_location][feature_location] << s.step_match.duration
         end
